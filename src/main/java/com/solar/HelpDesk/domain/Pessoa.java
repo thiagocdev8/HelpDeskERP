@@ -1,9 +1,12 @@
 package com.solar.HelpDesk.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.solar.HelpDesk.domain.enums.Perfil;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.HashSet;
@@ -13,14 +16,28 @@ import java.util.stream.Collectors;
 
 @Setter
 @Getter
-public abstract class Pessoa {
+@Entity
+public abstract class Pessoa implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     protected Integer id;
     protected String nome;
+
+    @Column(unique = true)
     protected String cpf;
+
+    @Column(unique = true)
     protected String email;
     protected String senha;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "PERFIS")
     protected Set<Integer> perfis = new HashSet<>();
+
+    @JsonFormat(pattern = "dd/MM/yyyy")
     protected LocalDate dataCriacao;
 
     public Pessoa() {
